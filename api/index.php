@@ -32,4 +32,12 @@ foreach ($env as $key => $value) {
     putenv("{$key}={$value}");
 }
 
+if (isset($_GET['path'])) {
+    $path = '/' . ltrim($_GET['path'], '/');
+    unset($_GET['path'], $_REQUEST['path']);
+
+    $_SERVER['REQUEST_URI'] = $path;
+    $_SERVER['PATH_INFO'] = $path;
+}
+
 require __DIR__ . '/../public/index.php';
