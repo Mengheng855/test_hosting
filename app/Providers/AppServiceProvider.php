@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Storage;
+
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,17 +16,19 @@ class AppServiceProvider extends ServiceProvider
     {
         //
     }
-
+    
+    
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+
+    public function boot()
     {
-        RateLimiter::for('login', function ($request) {
-            return [
-                Limit::perMinute(5)->by($request->email),
-                Limit::perMinute(10)->by($request->ip()),
-            ];
-        });
+        if (app()->environment('production') || env('VERCEL')) {
+            URL::forceScheme('https');
+
+            @mkdir('/tmp/storage/framework/views', 0777, true);
+            @mkdir('/tmp/storage/framework/cache', 0777, true);
+        }
     }
 }
